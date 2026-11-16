@@ -3,8 +3,9 @@
 This repository contains the SLiM 5 scripts used in the study Mediterranean dispersal imposed bottlenecks in Neolithic sheep and goats (DOI: 10.64898/2026.07.21.739115).
 
 The simulations model the demographic history of domestic goats (Capra hircus), focusing on their dispersal into the Iberian Peninsula and the associated population bottleneck. They investigate how dispersal and subsequent demographic changes influenced genetic diversity and genomic variation.
-**
-Model**
+
+
+**Model**
 
 The forward simulations are implemented in SLiM 5 and adapted from the SimHumanity framework (DOI: 10.1093/molbev/msaf313). The model includes:
 
