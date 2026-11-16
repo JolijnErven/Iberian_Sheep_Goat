@@ -9,8 +9,11 @@ Model**
 The forward simulations are implemented in SLiM 5 and adapted from the SimHumanity framework (DOI: 10.1093/molbev/msaf313). The model includes:
 
 -A model of ancestral goat population and dispersal into Iberia.
+
 -A dispersal-associated population bottleneck.
+
 -A nucleotide-based mutation model using Jukes–Cantor.
+
 -The assumed mutation rate is (4.32 \times 10^{-9}) mutations per site per generation.
 
 Model limitations: This is a deliberately simple demographic model intended as an initial exploration of the effects of dispersal-associated bottlenecks. More complex demographic scenarios, incorporating additional population structure, migration, and variation in demographic parameters, should be tested to assess the robustness of the results.
