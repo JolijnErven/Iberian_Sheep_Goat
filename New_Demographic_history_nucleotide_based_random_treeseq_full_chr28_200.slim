@@ -1,0 +1,94 @@
+initialize() {
+	// this seed value was used to produce Fig. S11-12 in SLiM 5.0; this model was taken from simhumanity https://doi.org/10.1093/molbev/msaf313
+	setSeed(1);
+	
+	// Enable modeling of explicit nucleotides
+	initializeSLiMOptions(nucleotideBased=T);
+	
+	// Turn on tree-sequence recording and simplify every 1000 generations
+	initializeTreeSeq(simplificationInterval=1000, timeUnit="generations");
+	
+	// Enable separate sexes
+	initializeSex();
+	
+	// Define constants for the DFE taken from the simhumanity model and mutation rate based on goats
+	defineConstant("MU", 4.3e-9);
+
+	// Mutation type m0: neutral mutations
+	initializeMutationTypeNuc("m0", 0.5, "f", 0.0);
+	
+	// We use the Jukes-Cantor mutational model with a constant mutation rate
+	mutMatrix = mmJukesCantor(4.3e-9 / 3.0);
+	
+	// Genomic element type g0
+	initializeGenomicElementType("g0", m0, 1.0, mutMatrix);
+
+	
+	// Define the ids, symbols, types, and lengths of all nuclear chromosomes
+	ids = 1:29;
+	symbols = asString(1:29);
+	types = c(rep("A", 29));
+	lengths = c(157403529, 136510948, 120038260, 120734967, 119020589, 117642376, 108433637,
+	112672868, 91568627, 101087561, 106225003, 87277233, 83034184, 94672734, 81904558,
+	79370173, 71137786, 67275903, 62516451, 71784256, 69425956, 60283067, 48866550,
+	62310067, 42858510, 51421554, 44709035, 44672303, 51332697);
+	
+	// If modelling all chromosomes, for the models in our paper we only used chr28
+//	for (id in ids, symbol in symbols, type in types, length in lengths)
+//	{
+//		initializeChromosome(id, length, type, symbol);
+//		
+//		// Use a random initial nucleotide sequence; this could be read from FASTA
+//		initializeAncestralNucleotides(randomNucleotides(length));
+//		
+//		// Read the recombination rate map from a file
+//		rpath = "/raid_md0/goat/vargoats/recombination_map/SLIM_Goat_" + "chr" + symbol + "_genetic_map.txt";
+//		initializeRecombinationRateFromFile(rpath, length-1);
+//		
+//		// Get genomic element
+//		initializeGenomicElement(g0, 0, length-1);    
+//
+	//}
+        initializeChromosome(28, 44672303, "A", "28");
+        initializeAncestralNucleotides(randomNucleotides(44672303));
+        initializeRecombinationRateFromFile("/raid_md0/goat/vargoats/updated_bertrand_servin_map_breed_sex/SLIM_Goat_chr28_genetic_map.txt", 44672303-1);
+        initializeGenomicElement(g0, 0, 44672303-1);
+}
+
+// INITIALIZE the ancestral Ganj Dareh population, based on ancestral Ne of ~10,000
+1 early() {
+	sim.addSubpop("p1", 10000);
+}
+
+// END BURN-IN; 
+80000 early() {
+	p1.setSubpopulationSize(10000);
+}
+
+// SPLIT Europe (p2) from Ganj Dareh (p1)
+80350 early() {
+	sim.addSubpopSplit("p2", 4000, p1);
+}
+
+// lower the European population
+81200 early() {
+	p2.setSubpopulationSize(3000);
+}
+
+// Remove indivuals from ganj dareh
+81220 early() {
+	p1.setSubpopulationSize(0);
+}
+
+// Introduce dispersal bottleneck  from Anatolia to Europe as a panmicting population; timing based on archaeological studies
+81240 early() {
+	p2.setSubpopulationSize(200);
+	p1.setSubpopulationSize(0);
+}
+
+
+// End model based on timing of earliest evidence of dispersal and timing of La Draga and Cova de l'avellaner 
+81880 late() {
+	// Write out the final trees archive, overwriting an existing archive -- This was done for a total Ne of 200 to 600
+	sim.treeSeqOutput("Demographic_history_goats_random_trees_full_chr28_200N.trees", overwriteDirectory=T);
+	}
